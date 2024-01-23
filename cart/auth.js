@@ -14,10 +14,11 @@ exports.authChecker = catchAsync(async(req,res,next)=>{
     }
   
     if(!token){
+      console.log('TOKEN NOT FOUND');
       return next();
     }
-  
-    const decoded = await promisify(jwt.verify)(token, 'test1234');
+    
+    const decoded = await promisify(jwt.verify)(token,process.env.JWT_KEY);
     if(!decoded._id){
       return next();
     }

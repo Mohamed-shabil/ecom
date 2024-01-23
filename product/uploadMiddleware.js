@@ -23,7 +23,7 @@ exports.resizeProductImages = catchAsync(async(req, res, next)=>{
     if(!req.file) return next();
     req.file.originalname = `product-${Date.now()}.jpeg`;
   
-    req.body.photo = req.file.originalname
+    req.body.image = req.file.originalname
     await sharp(req.file.buffer)
       .resize(500,500)
       .toFormat('jpeg')

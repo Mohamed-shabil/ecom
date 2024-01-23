@@ -1,15 +1,12 @@
-import mongoose from "mongoose";
-
+const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
     orderId :{
         type:String,
         unique:true,
     },
-    customer: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
+    userId: {
+        type:String
     },
     products: [],
     status: {
@@ -23,12 +20,6 @@ const orderSchema = new mongoose.Schema({
     },
     totalPrice: {
         type: Number,
-        required:true
-    },
-    deliveryAddress:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'Address',
-        required:true
     },
 },);
 

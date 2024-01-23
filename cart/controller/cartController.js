@@ -1,23 +1,31 @@
-import Cart from '../model/cart';
-import catchAsync from '../util/catchAsync'
+const Cart = require('../model/cart');
+const catchAsync = require('../util/catchAsync');
+const {serviceToProducer} = require('../kafka/producer')
+const { v4:uuid} = require('uuid')
 
 exports.addToCart = catchAsync(async (req, res) => {
-    const {userId, productId} = req.body
-    const quantity = parseInt(req.body.quantity) || 1;
+    const {productId} = req.body
+    console.log(req.currentUser)
+    const userId = req.currentUser._id
     const cart = await Cart.find({userId:userId,product:productId});
-   
-    const existingCartItemIndex = cart.findIndex(item => item.product.equals(product._id));
-
-    if (existingCartItemIndex !== -1) {
-        cart[existingCartItemIndex].quantity += quantity
-    } else {
-        cart.push({ product: productId, userId:userId});
-    }
+    console.log(cart);
+    if (cart) {
+        return res.status(201).json({
+            error:"product already exist in cart",
+            cart
+        })
+    } 
     
-    await user.save();
+    newItemToCart = new Cart({
+        userId,
+        product:productId
+    }) 
+    
+    await newItemToCart.save();
+    const newCart = await Cart.find({userId:userId,product:productId});
     return res.status(201).json({
         message:"product added to cart",
-        cart
+        newCart
     })
 });
 
@@ -40,15 +48,35 @@ exports.removeFromCart = catchAsync(async (req,res)=>{
 
 exports.getCart = catchAsync(async (req,res)=>{
     const {userId,productId} = req.body;
-    const cart = await Cart.find({userId:userId,product:productId})
-
+    const cart = await Cart.find(userId)
     if(cart.length == 0){
         return res.status(200).json({
-            message:' your cart is Empty'
+            message:' your cart is Empty',
+            cart
         })
     }
+    console.log(cart)
     return res.status(200).json({
         message:'cart',
         cart
+    })
+})
+
+
+exports.createOrder = catchAsync(async(req,res)=>{
+    const { userId } = req.body;
+    const cart = await Cart.find({userId});
+
+    const orderId = uuid();
+    console.log('ORDER ID :=',orderId)
+    const updatedCart = cart.map(item => {
+        item.orderId = orderId
+        return item;
+    });
+    console.log(updatedCart)
+
+    // serviceToProducer(updatedCart,'creating-order');
+    res.status(200).json({
+        message:'success'
     })
 })

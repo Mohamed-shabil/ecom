@@ -1,23 +1,46 @@
-import express from 'express'
+const express = require('express')
 const app = express();
-import bodyParser from 'body-parser';
-import morgan from 'morgan'
-import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv'
-import cartRouter from './routes/cartRoute';
-
+const bodyParser = require('body-parser')
+const morgan = require('morgan')
+const cookieParser = require('cookie-parser');
+const dotenv = require('dotenv')
+const mongoose = require('mongoose')
+const cors = require('cors');
+const { authChecker } = require('./auth');
+const cartRouter = require('./routes/cartRoute');
+const serviceToConsumer = require('./kafka/consumer')
 dotenv.config()
 
 mongoose.connect(process.env.MONGO_URL).then(()=>{
     console.log('Db Connected Successfully')
 })
 
+serviceToConsumer('user-created');
 
+
+app.use(cors({
+    origin:'http://localhost:3000',
+    methods:['POST','GET','DELETE'],
+    credentials: true,
+}))
+
+// Handle preflight requests
+app.options('*', cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+}));
+  
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended:true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 
+app.use(authChecker)
+
+app.use((req,res,next)=>{
+    console.log("Current User = ",req.currentUser);
+    next();
+})
 
 app.use(cartRouter);
 

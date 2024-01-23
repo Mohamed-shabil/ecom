@@ -13,10 +13,11 @@ exports.getProducts = catchAsync(async(req,res)=>{
 exports.createProduct = catchAsync(async(req,res)=>{
     const {name, image, price, description} = req.body;
     const productExist = await Product.findOne({name:name.toLowerCase()});
-
-    if(!productExist){
+    console.log()
+    if(productExist){
         return res.status(400).json({
-            error:'product with this name already exist'
+            error:'product with this name already exist',
+            productExist
         })
     }
 
@@ -54,12 +55,16 @@ exports.updateProduct =  catchAsync(async(req,res)=>{
 })
 
 
-exports.updateProduct =  catchAsync(async(req,res)=>{
+exports.deleteProduct =  catchAsync(async(req,res)=>{
     const {productId} = req.body;
     const product = await Product.findOneAndDelete({_id:productId});
-    
     return res.status(201).json({
         message:"product deleted successfully",
         product
     })
 })
+
+exports.deleteEveything  = async ()=>{
+    await Product.deleteMany();
+    console.log('Done')
+}

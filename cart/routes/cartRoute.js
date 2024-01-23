@@ -1,19 +1,14 @@
-import express from 'express';
-import { addToCart, removeCart, getCart } from '../controller/cartController'
+const express = require('express');
+const { addToCart, removeFromCart, getCart,createOrder } = require('../controller/cartController');
 
 const router = express.Router();
 
 router.post('/api/cart/add',addToCart);
 
-router.patch('/api/cart/remove',removeCart);
+router.patch('/api/cart/remove',removeFromCart);
 
 router.get('/api/cart/show',getCart);
 
-router.get('/api/users/address/',)
-router.post('/api/users/address/add',AddAddress)
-
-router.patch('/api/users/address/edit',editAddress)
-
-
+router.post('/api/cart/createOrder',createOrder);
 
 module.exports = router;

@@ -6,7 +6,7 @@ const {authChecker,requireAuth} = require('../auth');
 
 const router = express.Router();
 
-router.use(authChecker);
+
 
 router.post('/api/users/signup',signup)
 

@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs')
 const {Address} = require('../model/address')
 const catchAsync = require('../util/catchAsync')
 const jwt = require('jsonwebtoken');
-
+const {serviceToProducer} = require('../kafka/producer')
 
 exports.signin = catchAsync( async (req,res)=>{
     const {password, email} = req.body;
@@ -12,14 +12,14 @@ exports.signin = catchAsync( async (req,res)=>{
     
     if(!currentUser){
         return res.status(400).json({
-            message:'invalid password or email'
+            error:'invalid password or email'
         })
     }else{
         const isMatch = await bcrypt.compare(password,currentUser.password);
 
         if(!isMatch){
             return res.status(400).json({
-                message:'invalid password or email'
+                error:'invalid password or email'
             })
         }
 
@@ -37,18 +37,23 @@ exports.signin = catchAsync( async (req,res)=>{
 
         const token = jwt.sign(payload,process.env.JWT_KEY)
 
+        serviceToProducer(payload,'user-created')
         
 
         const cookieOptions = {
             expires: new Date(
             Date.now() + 30 * 24 * 60 * 60 * 1000
             ),
-            httpOnly: true,
+            domain:'localhost',
+            withCredentials: true
+        };
+        req.session = {
+            jwt:token
         };
 
         res.cookie('jwt',token,cookieOptions);
 
-        return res.status(200).json({
+        res.status(200).json({
             message:"user Loginned",
             user:currentUser,
         })
@@ -61,12 +66,12 @@ exports.signup = catchAsync( async (req,res)=>{
    
     if(oldUser){
         return res.status(400).json({
-            message:"User already exists, please login"
+            error :"User already exists, please login"
         })
     }
     if(req.body.password !== req.body.ConfirmPassword){
         return res.status(400).json({
-            message:"Your Passwords are not matching, please try again"
+            error :"Your Passwords are not matching, please try again"
         })
     }
     const pass = await bcrypt.hash(req.body.password,10);
@@ -96,21 +101,18 @@ exports.signup = catchAsync( async (req,res)=>{
         expires: new Date(
           Date.now() + 30 * 24 * 60 * 60 * 1000
         ),
-        httpOnly: true,
+        withCredentials: true
       };
-
+    req.currentUser = payload
+    req.session.jwt = token
     res.cookie('jwt',token,cookieOptions);
 
-    return res.status(200).json({
+    res.status(200).json({
         message :"you are signed up successfully",
         user,
         token
-
     })
 })
-
-
-
 
 exports.logout = catchAsync(async (req, res, next )=>{
     res.clearCookie('jwt');

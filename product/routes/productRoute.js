@@ -2,7 +2,6 @@ const express = require('express');
 const { getProducts, createProduct, updateProduct} = require('../controller/productController')
 const { productImages, resizeProductImages} = require('../uploadMiddleware')
 const { authChecker, requireAuth} = require('../auth')
-const {} = require('../uploadMiddleware')
 const router = express.Router();
 
 router.use(authChecker);
