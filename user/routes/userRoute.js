@@ -6,13 +6,14 @@ const {authChecker,requireAuth} = require('../auth');
 
 const router = express.Router();
 
+router.use(authChecker)
 
 
 router.post('/api/users/signup',signup)
 
 router.post('/api/users/signin',signin)
 
-router.post('/api/users/logout',logout)
+router.get('/api/users/logout',logout)
 
 router.get('/api/users/currentUser',currentUser);
 

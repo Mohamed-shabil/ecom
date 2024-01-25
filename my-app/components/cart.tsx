@@ -9,7 +9,9 @@ const Cart = () => {
         axios.get('http://localhost:3003/api/cart/show').then(res=>{
             setCart(res.data.cart)
         }).catch((err)=>{
-            console.log(err)
+            if(err.status === 401){
+                setCart([]);
+            }
         })
     },[])
 

@@ -1,10 +1,7 @@
 const {kafka} = require('./kafkaClient');
 const consumer= kafka.consumer({groupId:"cart-service-group"})
 const Order = require('../model/order');
-const { v4: uuidv4 } = require('uuid');
 
-
-console.log(req.currentUser)
 const serviceToConsumer = async(topic)=>{
     try {
         await consumer.connect()
@@ -15,20 +12,31 @@ const serviceToConsumer = async(topic)=>{
 
               const productId = productData._id;
 
-              let order = await Order.findOne({});
+              console.log(productData.orderId);
+              let order = await Order.findOne({orderId:productData.orderId});
+              console.log(order);
 
               if (!order) {
                 order = new Order({
-                  userId: 'userId', 
-                  orderId: uuidv4(),
+                  userId: productData.userId, 
+                  orderId: productData.orderId,
                   products: [], 
+                  totalPrice : 0
                 });
               }
+              
+              order.products.push({
+                name:productData.name,
+                description:productData.description,
+                price:productData.price,
+                image:productData.image,
+                productId:productData.productId
+              });
+              order.totalPrice += productData.price*1
 
-              order.products.push(productId);
               await order.save();
-
-              console.log(order)
+      
+              console.log(productData);
             }
         })
     } catch (error) {

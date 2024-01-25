@@ -5,6 +5,7 @@ import {ModeToggle} from '@/components/mode-toggle'
 import { Separator } from '@/components/ui/separator'
 import { ShoppingBasket } from "lucide-react";
 import Cart from "@/components/cart";
+import {User} from "@/components/user"
 const Navbar = () => {
     return (
         <header>
@@ -14,10 +15,10 @@ const Navbar = () => {
                 </div>
 
                 <div className="flex items-center space-x-4">
-                    <Link href="#" className="hover:text-gray-400">Home</Link>
-                    <Cart />
-                    <Link href="#" className="hover:text-gray-400">Orders</Link>
-                    <Link href="#" className="hover:text-gray-400">SignOut</Link>
+                    <Link href="/" className="hover:text-gray-400">Home</Link>
+                    <Link href="/cart" className="hover:text-gray-400">Cart</Link>
+                    <Link href="/orders" className="hover:text-gray-400">Orders</Link>
+                    <User/>
                     <ModeToggle/>
                 </div>
             </nav>

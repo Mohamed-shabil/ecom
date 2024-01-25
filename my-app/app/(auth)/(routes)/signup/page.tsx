@@ -20,8 +20,9 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card"
-import { useRouter } from "next/navigation";
+import { useRouter,useParams } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast"
+import Link from "next/link";
 
 const signin = () => {  
     const formSchema = z.object({
@@ -56,7 +57,8 @@ const signin = () => {
     })
     
     const isLoading = form.formState.isSubmitting;
-    const router = useRouter()
+    const router = useRouter();
+
     const {toast} = useToast();
     const onSubmit = async(values : z.infer<typeof formSchema>)=>{
         console.log('FORM VALUES :=',values);
@@ -150,11 +152,12 @@ const signin = () => {
                                     </FormItem>
                                 )}
                             />
-                            <Button className="w-full mt-4" disabled={isLoading}>
+                            <Button className="w-full mt-4 cursor-pointer" disabled={isLoading}>
                                 SignUp
                             </Button>
                         </form>
                     </Form>
+                    <p className="text-center text-sky-500 pt-5"><Link href="/signin">Signin</Link></p>
                 </CardContent>
             </Card>
         </div>

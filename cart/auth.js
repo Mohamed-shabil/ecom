@@ -27,11 +27,15 @@ exports.authChecker = catchAsync(async(req,res,next)=>{
   })
 
 
-exports.requireAuth = catchAsync((req,res,next)=>{
-    if(!req.currentUser){
+exports.requireAuth = (req,res,next)=>{
+    try {
+      if(!req.currentUser){
         return res.status(401).json({
             error:"your not authenticated"
         })
     }
     next();
-})
+    } catch (error) {
+      console.log(error)
+    }
+}

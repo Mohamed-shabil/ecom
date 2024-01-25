@@ -160,9 +160,10 @@ exports.editAddress = catchAsync( async (req,res)=>{
 })
 
 exports.currentUser = catchAsync(async (req,res)=>{
+    console.log(req.currentUser)
     if(!req.currentUser){
         return res.status(401).json({
-            error:'you are not '
+            error:'you are not authenticated'
         })
     }
     return res.status(200).json({

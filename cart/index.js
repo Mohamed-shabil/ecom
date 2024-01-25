@@ -8,6 +8,7 @@ const mongoose = require('mongoose')
 const cors = require('cors');
 const { authChecker } = require('./auth');
 const cartRouter = require('./routes/cartRoute');
+// const {deleteAll} = require('./controller/cartController')
 const serviceToConsumer = require('./kafka/consumer')
 dotenv.config()
 
@@ -38,9 +39,11 @@ app.use(morgan('dev'));
 app.use(authChecker)
 
 app.use((req,res,next)=>{
-    console.log("Current User = ",req.currentUser);
+    console.log("Current User = ",req.currentUser.name);
     next();
 })
+
+
 
 app.use(cartRouter);
 

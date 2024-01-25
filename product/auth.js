@@ -17,7 +17,6 @@ exports.authChecker = catchAsync(async(req,res,next)=>{
       return next();
     }
     
-    console.log("[ TOKEN ]",token)
     const decoded = await promisify(jwt.verify)(token,process.env.JWT_KEY);
     if(!decoded._id){
       return next();

@@ -23,11 +23,15 @@ import {
 import { useRouter } from "next/navigation";
 import { ToastAction } from "@/components/ui/toast"
 import { toast, useToast } from "@/components/ui/use-toast"
+import Link from "next/link";
 
 const signin = () => {  
 
 
+
+    
     const {toast} = useToast();
+    const router = useRouter()
     const formSchema = z.object({
         email:z.string().email({
             message:'Invalid email format'
@@ -42,7 +46,6 @@ const signin = () => {
         }
     })
     const isLoading = form.formState.isSubmitting;
-    const router = useRouter()
     const onSubmit = async(values : z.infer<typeof formSchema>)=>{
         try {
             console.log('FORM VALUES :=',values);
@@ -71,6 +74,7 @@ const signin = () => {
                 <CardHeader className="text-center">
                     <CardTitle>Signin</CardTitle>
                 </CardHeader>
+
                 <CardContent>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="w-[350px]">
@@ -107,6 +111,7 @@ const signin = () => {
                             </Button>
                         </form>
                     </Form>
+                    <p className="text-center text-sky-500 pt-5"><Link href="/signup">Signup</Link></p>
                 </CardContent>
             </Card>
         </div>

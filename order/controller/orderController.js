@@ -1,4 +1,4 @@
-import Order from '../model/order';
+const Order = require('../model/order');
 const catchAsync = require('../util/catchAsync')
 
 
@@ -21,3 +21,24 @@ exports.cancelOrder = catchAsync(async (req,res)=>{
         order
     })
 })
+
+
+exports.getOrder = catchAsync(async (req,res)=>{
+    console.log(req.currentUser)
+    const orders = await Order.find();
+
+    if(!orders.length){
+        return res.status(400).json({
+            error:"You dont have any orders"
+        })
+    }
+    
+    return res.status(200).json({
+        orders,
+    })
+})
+
+exports.deleteAll = async ()=>{
+    const order = await Order.deleteMany();
+    console.log("DONE");
+}

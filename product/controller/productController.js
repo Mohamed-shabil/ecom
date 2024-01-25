@@ -13,7 +13,6 @@ exports.getProducts = catchAsync(async(req,res)=>{
 exports.createProduct = catchAsync(async(req,res)=>{
     const {name, image, price, description} = req.body;
     const productExist = await Product.findOne({name:name.toLowerCase()});
-    console.log()
     if(productExist){
         return res.status(400).json({
             error:'product with this name already exist',
